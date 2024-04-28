@@ -1,4 +1,6 @@
-﻿
+﻿SET IDENTITY_INSERT [Book_Journal] OFF
+SET IDENTITY_INSERT [Authors] ON
+
 declare @n int = 0;
 declare @k int = 20;
 declare @a char = 'À', @z char = 'ÿ', @w int, @l int
@@ -10,7 +12,7 @@ declare @Count int;
 DECLARE @DATEOFBIRTH DATE
 DECLARE @PlaceOfBirth NVARCHAR(50);
 
-while (@n<10 )
+while (@n<5000)
 begin
 	
 	if (@k>80) SET @k=20
@@ -22,15 +24,19 @@ begin
     SET @DATEOFBIRTH= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')  
 	
 	if (len(@FullName)>50) SET @FullName = ' ' else SET @FullName= @FullName+char(round(rand() * @w, 0) + @l)
+	if @FullName IS NULL SET @FullName = ' '
 	if (len(@PlaceOfBirth)>50) SET @PlaceOfBirth = ' ' else SET @PlaceOfBirth= @PlaceOfBirth+char(round(rand() * @w, 0) + @l)
-	
-	insert into [dbo].Authors([ID_Author],[Full_Name], [Date_Of_Birth],[Place_Of_Birth],[Count_Of_Published_Books])
+	if @PlaceOfBirth IS NULL SET @PlaceOfBirth = ' '
+	insert into [dbo].[Authors]([ID_Author],[Full_Name], [Date_Of_Birth],[Place_Of_Birth],[Count_Of_Published_Books])
 	values (@idAuthors,@FullName, @DATEOFBIRTH,@PlaceOfBirth,@Count)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
+
 SELECT * FROM Authors
+SET IDENTITY_INSERT [Authors] OFF
+SET IDENTITY_INSERT [Genres] ON
 
 SET @n = 0;
 SET @k = 20;
@@ -52,7 +58,9 @@ begin
   
 	
 	if (len(@Title)>50) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
+	if @Title IS NULL SET @Title = ' '
 	if (len(@Descr)>100) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
+	if @Descr IS NULL SET @Descr = ' '
 	
 	insert into [dbo].Genres([ID_Genre],[Title], [Descr])
 	values (@idGenres,@Title, @Descr)
@@ -61,6 +69,8 @@ begin
 	SET @k=@k+1
 end
 Select * From Genres
+SET IDENTITY_INSERT [Genres] OFF
+SET IDENTITY_INSERT [Books] ON
 
 SET @n = 0;
 SET @k = 20;
@@ -84,8 +94,10 @@ begin
   
 	
 	if (len(@TitleBook)>50) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
+	if @TitleBook IS NULL SET @TitleBook = ' '
 	if (len(@NatLang)>30) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
-	
+	if @NatLang IS NULL SET @NatLang = ' '
+
 	insert into [dbo].Books([ID_Book],[ID_Author],[ID_Genre],[Title], [Native_Language],[Date_Of_Publishing])
 	values (@idBook,@idAuthors,@idGenres,@Title, @NatLang,@DATEOFPUBL)
 
@@ -94,6 +106,8 @@ begin
 end
 Select * From Books
 
+SET IDENTITY_INSERT [Books] OFF
+SET IDENTITY_INSERT [Publishing_Houses] ON
 
 SET @n = 0;
 SET @k = 20;
@@ -118,7 +132,9 @@ begin
   
 	
 	if (len(@TitlePubH)>30) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
+	if @TitlePubH IS NULL SET @TitlePubH = ' '
 	if (len(@RegPlace)>30) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
+	if @RegPlace IS NULL SET @RegPlace = ' '
 	
 	insert into [dbo].Publishing_Houses([ID_Publishing_House],[Title],[Place_Of_Registration],[Annual_Sales_Turnover])
 	values (@idPubH,@TitlePubH,@RegPlace,@AnnSalesTurn)
@@ -127,6 +143,9 @@ begin
 	SET @k=@k+1
 end
 Select * From Publishing_Houses
+
+SET IDENTITY_INSERT [Publishing_Houses] OFF
+SET IDENTITY_INSERT [Libraries] ON
 
 SET @n = 0;
 SET @k = 20;
@@ -152,7 +171,9 @@ begin
 	
 	if (len(@TitleLib)>30) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
 	if (len(@Adress)>50) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
-	
+	if @TitleLib IS NULL SET @TitleLib = ' '
+	if @Adress IS NULL SET @Adress = ' '
+
 	insert into [dbo].Libraries([ID_Library],[Title],[Adress])
 	values (@idLib,@TitleLib,@Adress)
 
@@ -160,6 +181,9 @@ begin
 	SET @k=@k+1
 end
 Select * From Libraries
+
+SET IDENTITY_INSERT [Libraries] OFF
+SET IDENTITY_INSERT [Books_Example] ON
 
 SET @n = 0;
 SET @k = 20;
@@ -185,7 +209,9 @@ begin
 	
 	if (len(@TypeOfPaper)>30) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
 	if (len(@TypeOfBind)>30) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
-	
+	if @TypeOfPaper IS NULL SET @TypeOfPaper = ' '
+	if @TypeOfBind IS NULL SET @TypeOfBind = ' '
+
 	insert into [dbo].Books_Example([ID_Books_Example],[Amount_Of_Pages],[Type_Of_Paper],[Type_Of_Binding],[ID_Book],[ID_Publishing_House],[ID_Library])
 	values (@idBookEx,@AmOfPages,@TypeOfPaper,@TypeOfBind,@idBook,@idPubH,@idLib)
 
@@ -193,6 +219,9 @@ begin
 	SET @k=@k+1
 end
 Select * From Books_Example
+
+SET IDENTITY_INSERT [Books_Example] OFF
+SET IDENTITY_INSERT [Reader] ON
 
 SET @n = 0;
 SET @k = 20;
@@ -219,6 +248,8 @@ begin
 	
 	if (len(@FullNameRead)>50) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
 	if (len(@PhoneNumb)>50) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
+	if @FullNameRead IS NULL SET @FullNameRead = ' '
+	if @PhoneNumb IS NULL SET @PhoneNumb = ' '
 	SET @DateOfBirthReader= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
 
 	insert into [dbo].Reader([ID_Reader],[Full_Name],[Phone_Number],[Date_Of_Birth],[ID_Library])
@@ -229,6 +260,8 @@ begin
 end
 Select * From Reader
 
+SET IDENTITY_INSERT [Reader] OFF
+SET IDENTITY_INSERT [Book_Journal] ON
 
 SET @n = 0;
 SET @k = 20;
@@ -261,3 +294,6 @@ begin
 	SET @k=@k+1
 end
 Select * From Book_Journal
+
+
+SET IDENTITY_INSERT [Book_Journal] OFF
