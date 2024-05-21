@@ -1,12 +1,10 @@
-﻿SET IDENTITY_INSERT [Book_Journal] OFF
-SET IDENTITY_INSERT [Authors] ON
-
-declare @n int = 0;
+﻿declare @n int = 0;
 declare @k int = 20;
-declare @a char = 'À', @z char = 'ÿ', @w int, @l int
+declare @AltKey nvarchar(25);
+declare @a char = 'А', @z char = 'я', @w int, @l int
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idAuthors int;
+--declare @ident uniqueidentifier;
 declare @FullName nvarchar(50);
 declare @Count int;
 DECLARE @DATEOFBIRTH DATE
@@ -18,33 +16,32 @@ begin
 	if (@k>80) SET @k=20
 
 
-	SET @idAuthors =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1 
-	
-	SET @Count =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1 
-    SET @DATEOFBIRTH= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')  
+	--SET @ident = NEWID();
+	--SET @AltKey = left(replace(@ident,'-',''),12);
+	SET @Count =CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%20006+1 
+    SET @DATEOFBIRTH= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.1960')  
 	
 	if (len(@FullName)>50) SET @FullName = ' ' else SET @FullName= @FullName+char(round(rand() * @w, 0) + @l)
 	if @FullName IS NULL SET @FullName = ' '
 	if (len(@PlaceOfBirth)>50) SET @PlaceOfBirth = ' ' else SET @PlaceOfBirth= @PlaceOfBirth+char(round(rand() * @w, 0) + @l)
 	if @PlaceOfBirth IS NULL SET @PlaceOfBirth = ' '
-	insert into [dbo].[Authors]([ID_Author],[Full_Name], [Date_Of_Birth],[Place_Of_Birth],[Count_Of_Published_Books])
-	values (@idAuthors,@FullName, @DATEOFBIRTH,@PlaceOfBirth,@Count)
+	insert into [dbo].[Authors]([Full_Name], [Date_Of_Birth],[Place_Of_Birth],[Count_Of_Published_Books])
+	values (@FullName, @DATEOFBIRTH,@PlaceOfBirth,@Count)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 
 SELECT * FROM Authors
-SET IDENTITY_INSERT [Authors] OFF
-SET IDENTITY_INSERT [Genres] ON
+
 
 SET @n = 0;
 SET @k = 20;
-SET @a = 'À'; 
-SET @z = 'ÿ';
+SET @a = 'А'; 
+SET @z = 'я';
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idGenres int;
+
 declare @Title nvarchar(50);
 DECLARE @Descr NVARCHAR(100);
 
@@ -54,68 +51,73 @@ begin
 	if (@k>80) SET @k=20
 
 
-	SET @idGenres =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1 
-  
-	
+	--SET @ident = NEWID();  
+	--SET @AltKey = left(replace(@ident,'-',''),12);
 	if (len(@Title)>50) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
 	if @Title IS NULL SET @Title = ' '
 	if (len(@Descr)>100) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
 	if @Descr IS NULL SET @Descr = ' '
 	
-	insert into [dbo].Genres([ID_Genre],[Title], [Descr])
-	values (@idGenres,@Title, @Descr)
+	insert into [dbo].Genres([Title], [Descr])
+	values (@Title, @Descr)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 Select * From Genres
-SET IDENTITY_INSERT [Genres] OFF
-SET IDENTITY_INSERT [Books] ON
+
 
 SET @n = 0;
 SET @k = 20;
-SET @a = 'À'; 
-SET @z = 'ÿ';
+SET @a = 'А'; 
+SET @z = 'я';
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idBook int;
+declare @idAuthors int;
+declare @idGenres int;
 declare @TitleBook nvarchar(50);
 DECLARE @NatLang NVARCHAR(30);
 DECLARE @DATEOFPUBL DATE
+declare @Rus nvarchar(30)='Русский';
+declare @Eng nvarchar(30)='Английский';
+declare @Fr nvarchar(30)='Французский';
+declare @Esp nvarchar(30) = 'Испанский';
+declare @langINT int;
 
-while (@n<5000 )
+while (@n<50000)
 begin
 	
 	if (@k>80) SET @k=20
 
 
-	SET @idBook =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
+	--SET @ident = NEWID();
+	--SET @AltKey = left(replace(@ident,'-',''),12);
 	SET @DATEOFPUBL= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
-  
+	SET @idAuthors = ROUND(RAND() * 10000,0)+1--%10000
+	SET @idGenres = ROUND(RAND() * 5,0)+1--%10000
 	
 	if (len(@TitleBook)>50) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
 	if @TitleBook IS NULL SET @TitleBook = ' '
-	if (len(@NatLang)>30) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
-	if @NatLang IS NULL SET @NatLang = ' '
+	SET @langINT=CAST(ROUND(RAND() * 10,0)AS NUMERIC)%4+1 
+	if @langINT=1 SET @NatLang=@Rus else if @langINT=2 SET @NatLang=@Eng else if @langINT=3 SET @NatLang=@Fr else SET @NatLang = @Esp 
+	
 
-	insert into [dbo].Books([ID_Book],[ID_Author],[ID_Genre],[Title], [Native_Language],[Date_Of_Publishing])
-	values (@idBook,@idAuthors,@idGenres,@Title, @NatLang,@DATEOFPUBL)
+	insert into [dbo].Books([ID_Author],[ID_Genre],[Title], [Native_Language],[Date_Of_Publishing])
+	values (@idAuthors,@idGenres,@Title, @NatLang,@DATEOFPUBL)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 Select * From Books
 
-SET IDENTITY_INSERT [Books] OFF
-SET IDENTITY_INSERT [Publishing_Houses] ON
 
 SET @n = 0;
 SET @k = 20;
-SET @a = 'À'; 
-SET @z = 'ÿ';
+SET @a = 'А'; 
+SET @z = 'я';
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idPubH int;
+
 declare @TitlePubH nvarchar(30);
 DECLARE @RegPlace NVARCHAR(30);
 DECLARE @AnnSalesTurn int
@@ -126,34 +128,33 @@ begin
 	if (@k>80) SET @k=20
 
 
-	SET @idPubH =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
+	--SET @ident = NEWID();
+	--SET @AltKey = left(replace(@ident,'-',''),12);
 	SET @AnnSalesTurn=CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
 	
   
 	
 	if (len(@TitlePubH)>30) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
-	if @TitlePubH IS NULL SET @TitlePubH = ' '
+	if @TitlePubH IS NULL SET @TitlePubH = 'вадпрдлаовп'
 	if (len(@RegPlace)>30) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
-	if @RegPlace IS NULL SET @RegPlace = ' '
+	if @RegPlace IS NULL SET @RegPlace = 'Саратов'
 	
-	insert into [dbo].Publishing_Houses([ID_Publishing_House],[Title],[Place_Of_Registration],[Annual_Sales_Turnover])
-	values (@idPubH,@TitlePubH,@RegPlace,@AnnSalesTurn)
+	insert into [dbo].Publishing_Houses([Title],[Place_Of_Registration],[Annual_Sales_Turnover])
+	values (@TitlePubH,@RegPlace,@AnnSalesTurn)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 Select * From Publishing_Houses
 
-SET IDENTITY_INSERT [Publishing_Houses] OFF
-SET IDENTITY_INSERT [Libraries] ON
 
 SET @n = 0;
 SET @k = 20;
-SET @a = 'À'; 
-SET @z = 'ÿ';
+SET @a = 'А'; 
+SET @z = 'я';
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idLib int;
+
 declare @TitleLib nvarchar(30);
 DECLARE @Adress NVARCHAR(50);
 
@@ -164,34 +165,35 @@ begin
 	if (@k>80) SET @k=20
 
 
-	SET @idLib =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
+	--SET @ident = NEWID();
+	--SET @AltKey = left(replace(@ident,'-',''),12);
 
 	
   
 	
 	if (len(@TitleLib)>30) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
 	if (len(@Adress)>50) SET @Descr = ' ' else SET @Descr= @Descr+char(round(rand() * @w, 0) + @l)
-	if @TitleLib IS NULL SET @TitleLib = ' '
-	if @Adress IS NULL SET @Adress = ' '
+	if @TitleLib IS NULL SET @TitleLib = 'Библиотека номер 3'
+	if @Adress IS NULL SET @Adress = 'авипадавыв'
 
-	insert into [dbo].Libraries([ID_Library],[Title],[Adress])
-	values (@idLib,@TitleLib,@Adress)
+	insert into [dbo].Libraries([Title],[Adress])
+	values (@TitleLib,@Adress)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 Select * From Libraries
 
-SET IDENTITY_INSERT [Libraries] OFF
-SET IDENTITY_INSERT [Books_Example] ON
 
 SET @n = 0;
 SET @k = 20;
-SET @a = 'À'; 
-SET @z = 'ÿ';
+SET @a = 'А'; 
+SET @z = 'я';
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idBookEx int;
+declare @idBook int;
+declare @idPubH int;
+declare @idLib int;
 declare @AmOfPages int;
 declare @TypeOfPaper nvarchar(30);
 DECLARE @TypeOfBind NVARCHAR(30);
@@ -202,9 +204,12 @@ begin
 	if (@k>80) SET @k=20
 
 
-	SET @idBookEx =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
+	--SET @ident = NEWID();
+	--SET @AltKey = left(replace(@ident,'-',''),12);
 	SET @AmOfPages=CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
-	
+	SET @idBook = ROUND(RAND() * 10000,0)+1--%10000
+	SET @idPubH = ROUND(RAND() * 10000,0)+1--%10000
+	SET @idLib = ROUND(RAND() * 10000,0)+1--%10000
   
 	
 	if (len(@TypeOfPaper)>30) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
@@ -212,24 +217,22 @@ begin
 	if @TypeOfPaper IS NULL SET @TypeOfPaper = ' '
 	if @TypeOfBind IS NULL SET @TypeOfBind = ' '
 
-	insert into [dbo].Books_Example([ID_Books_Example],[Amount_Of_Pages],[Type_Of_Paper],[Type_Of_Binding],[ID_Book],[ID_Publishing_House],[ID_Library])
-	values (@idBookEx,@AmOfPages,@TypeOfPaper,@TypeOfBind,@idBook,@idPubH,@idLib)
+	insert into [dbo].Books_Example([Amount_Of_Pages],[Type_Of_Paper],[Type_Of_Binding],[ID_Book],[ID_Publishing_House],[ID_Library])
+	values (@AmOfPages,@TypeOfPaper,@TypeOfBind,@idBook,@idPubH,@idLib)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 Select * From Books_Example
 
-SET IDENTITY_INSERT [Books_Example] OFF
-SET IDENTITY_INSERT [Reader] ON
 
 SET @n = 0;
 SET @k = 20;
-SET @a = 'À'; 
-SET @z = 'ÿ';
+SET @a = 'А'; 
+SET @z = 'я';
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idReader int;
+
 declare @FullNameRead nvarchar(50);
 DECLARE @PhoneNumb NVARCHAR(50);
 DECLARE @DateOfBirthReader DATE
@@ -241,9 +244,10 @@ begin
 	if (@k>80) SET @k=20
 
 
-	SET @idReader =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
+	--SET @ident = NEWID();
+	--SET @AltKey = left(replace(@ident,'-',''),12);
 	
-	
+	SET @idLib = ROUND(RAND() * 10000,0)+1--%10000
   
 	
 	if (len(@FullNameRead)>50) SET @Title = ' ' else SET @Title= @Title+char(round(rand() * @w, 0) + @l)
@@ -252,24 +256,24 @@ begin
 	if @PhoneNumb IS NULL SET @PhoneNumb = ' '
 	SET @DateOfBirthReader= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
 
-	insert into [dbo].Reader([ID_Reader],[Full_Name],[Phone_Number],[Date_Of_Birth],[ID_Library])
-	values (@idReader,@FullNameRead,@PhoneNumb,@DateOfBirthReader, @idLib)
+	insert into [dbo].Reader([Full_Name],[Phone_Number],[Date_Of_Birth],[ID_Library])
+	values (@FullNameRead,@PhoneNumb,@DateOfBirthReader, @idLib)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 Select * From Reader
 
-SET IDENTITY_INSERT [Reader] OFF
-SET IDENTITY_INSERT [Book_Journal] ON
 
 SET @n = 0;
 SET @k = 20;
-SET @a = 'À'; 
-SET @z = 'ÿ';
+SET @a = 'А'; 
+SET @z = 'я';
 SET @w = ascii(@z) - ascii(@a);
 SET @l = ascii(@a);
-declare @idREC int;
+
+declare @idBookEx int;
+declare @idReader int;
 DECLARE @DateOfT DATE;
 DECLARE @DateOfBB DATE;
 
@@ -279,21 +283,21 @@ begin
 	
 	if (@k>80) SET @k=20
 
-	SET @idREC =CAST(ROUND(RAND() * 100000,0)AS NUMERIC)%20006+1
-	
+	--SET @ident = NEWID();
+	--SET @AltKey = left(replace(@ident,'-',''),12);
+	SET @idReader = ROUND(RAND() * 10000,0)+1--%10000
+	SET @idBookEx = ROUND(RAND() * 10000,0)+1--%10000
 	
 	
   
 	SET @DateOfT= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
 	SET @DateOfBB= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
 
-	insert into [dbo].Book_Journal([ID_Record],[ID_Reader],[ID_Books_Example],[Date_Of_Taking],[Date_Of_Bringing_Back])
-	values (@idREC,@idReader,@idBookEx,@DateOfT, @DateOfBB)
+	insert into [dbo].Book_Journal([ID_Reader],[ID_Books_Example],[Date_Of_Taking],[Date_Of_Bringing_Back])
+	values (@idReader,@idBookEx,@DateOfT, @DateOfBB)
 
 	SET @n=@n+1
 	SET @k=@k+1
 end
 Select * From Book_Journal
 
-
-SET IDENTITY_INSERT [Book_Journal] OFF
