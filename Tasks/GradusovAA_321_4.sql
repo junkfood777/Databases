@@ -1,6 +1,7 @@
 --Составной некластерный:
 --1:
 
+DROP INDEX IDX_Books_Example_Book_Pub_Lib on Books_Example;
 SELECT b.Title AS BookTitle, a.Full_Name AS AuthorName, g.Title AS GenreTitle
 FROM Books b
 INNER JOIN Authors a ON b.ID_Author = a.ID_Author
@@ -14,6 +15,7 @@ FROM Books b
 INNER JOIN Authors a ON b.ID_Author = a.ID_Author
 INNER JOIN Genres g ON b.ID_Genre = g.ID_Genre;
 
+DROP INDEX IDX_Books_Example_Book_Pub_Lib on Books_Example;
 --2:
 SELECT b.Title, b.Date_Of_Publishing
 FROM Books b
@@ -33,7 +35,7 @@ WHERE b.Date_Of_Publishing > ALL (
     FROM Book_Journal bj
     WHERE bj.ID_Books_Example = b.ID_Book
 );
-
+DROP INDEX IDX_Books_Author_Genre_Date ON Books;
 --3:
 SELECT Title, 
        SUBSTRING(Title, 1, 10) AS SubstrTitle
@@ -48,6 +50,7 @@ SELECT Title,
 FROM Books
 WHERE Native_Language = 'Русский'
 
+DROP INDEX IDX_Books_Title_Language ON Books;
 --4:
 SELECT Title, 
        DATEPART(year, Date_Of_Publishing) AS PublishYear
@@ -62,6 +65,7 @@ SELECT Title,
 FROM Books
 WHERE DATEPART(month, Date_Of_Publishing) = 12;
 
+DROP INDEX IDX_Books_Date_Author ON Books;
 --5:
 
 SELECT be.ID_Library, b.ID_Author, SUM(be.Amount_Of_Pages) AS TotalPages
@@ -79,6 +83,7 @@ JOIN Books b ON be.ID_Book = b.ID_Book
 GROUP BY be.ID_Library, b.ID_Author
 HAVING SUM(be.Amount_Of_Pages) > 1000;
 
+DROP INDEX IDX_Books_Example_Library_Book ON Books_Example;
 --6:
 
 SELECT Full_Name
@@ -98,6 +103,8 @@ WHERE ID_Author IN (
     SELECT ID_Author
     FROM Books
     WHERE ID_Genre > 10);
+
+DROP INDEX IDX_Books_Author_Genre ON Books;
 --7
 
 SELECT Full_Name
@@ -120,3 +127,5 @@ UNION
 SELECT Full_Name
 FROM Authors
 WHERE Date_Of_Birth > '1990-01-01';
+
+DROP INDEX IDX_Authors_BirthDate ON Authors;
