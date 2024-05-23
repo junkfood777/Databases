@@ -1,7 +1,6 @@
 --Составной некластерный:
 --1:
 
-DROP INDEX IDX_Books_Example_Book_Pub_Lib on Books_Example;
 SELECT b.Title AS BookTitle, a.Full_Name AS AuthorName, g.Title AS GenreTitle
 FROM Books b
 INNER JOIN Authors a ON b.ID_Author = a.ID_Author

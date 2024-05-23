@@ -29,7 +29,7 @@ begin
 	--SET @ident = NEWID();
 	--SET @AltKey = left(replace(@ident,'-',''),12);
 	SET @Count =CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%20006+1 
-    SET @DATEOFBIRTH= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.1960')  
+    SET @DATEOFBIRTH= DATEADD(DAY,CAST(ROUND(RAND() * 10000,0)AS NUMERIC)%100000,'04.04.1900')  
 	
 	if (len(@FullName)>50) SET @FullName = ' ' else SET @FullName= @FullName+char(round(rand() * @w, 0) + @l) + char(round(rand() * @w, 0) + @l) + char(round(rand() * @w, 0) + @l)
 	if @FullName IS NULL SET @FullName = ' '
@@ -105,7 +105,7 @@ begin
 
 	--SET @ident = NEWID();
 	--SET @AltKey = left(replace(@ident,'-',''),12);
-	SET @DATEOFPUBL= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
+	SET @DATEOFPUBL= DATEADD(DAY,CAST(ROUND(RAND() * 10000,0)AS NUMERIC)%100000,'04.04.1900')
 	SET @idAuthors = ROUND(RAND() * 10000,0)+1--%10000
 	SET @idGenres = ROUND(RAND() * 5,0)+1--%10000
 	
@@ -267,17 +267,14 @@ begin
 
 	SET @FullNameRead = ''
 	SET @PhoneNumb = '8'
-	--SET @ident = NEWID();
-	--SET @AltKey = left(replace(@ident,'-',''),12);
 	
 	SET @idLib = ROUND(RAND() * 10000,0)+1 %1000
   
 	
 	if (len(@FullNameRead)>50) SET @FullNameRead = ' ' else SET @FullNameRead= @FullNameRead+char(round(rand() * @w, 0) + @l) + char(round(rand() * @w, 0) + @l) + char(round(rand() * @w, 0) + @l)
 	if (len(@PhoneNumb)>50) SET @PhoneNumb = ' ' else SET @PhoneNumb= @PhoneNumb+char(round(rand() * @w, 0) + @l) + char(round(rand() * @w, 0) + @l) + char(round(rand() * @w, 0) + @l)
-	--if (len(@PhoneNumb)>11) SET @PhoneNumb = ' ' else SET @PhoneNumb= @PhoneNumb+char(round(rand() * @pn, 0) + @pnl) + char(round(rand() * @pn, 0) + @pnl) + char(round(rand() * @pn, 0) + @pnl) + char(round(rand() * @pn, 0) + @pnl) + char(round(rand() * @pn, 0) + @pnl) + char(round(rand() * @pn, 0) + @pnl) + char(round(rand() * @pn, 0) + @pnl)	+ char(round(rand() * @pn, 0) + @pnl) + char(round(rand() * @pn, 0) + @pnl) + + char(round(rand() * @pn, 0) + @pnl)
 	
-	SET @DateOfBirthReader= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%1000,'04.04.2023')
+	SET @DateOfBirthReader= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%1500,'04.04.2020')
 
 	insert into [dbo].Reader([Full_Name],[Phone_Number],[Date_Of_Birth],[ID_Library])
 	values (@FullNameRead,@PhoneNumb,@DateOfBirthReader, @idLib)
@@ -301,20 +298,18 @@ DECLARE @DateOfT DATE;
 DECLARE @DateOfBB DATE;
 
 
-while (@n<30000)
+while (@n<300)
 begin
 	
 	if (@k>80) SET @k=20
 
-	--SET @ident = NEWID();
-	--SET @AltKey = left(replace(@ident,'-',''),12);
-	SET @idReader = ROUND(RAND() * 10000,0)+1 %1000
-	SET @idBookEx = ROUND(RAND() * 10000,0)+1 %10000
+	SET @idReader = ROUND(RAND() * 10000,0) + 1 %1000
+	SET @idBookEx = ROUND(RAND() * 10000,0) + 1 %10000
 	
 	
   
-	SET @DateOfT= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
-	SET @DateOfBB= DATEADD(DAY,CAST(ROUND(RAND() * 1000,0)AS NUMERIC)%366,'04.04.2023')
+	SET @DateOfT= DATEADD(DAY,CAST(ROUND(RAND() * 10000,0)AS NUMERIC)%1000,'04.04.2023')
+	SET @DateOfBB= DATEADD(DAY,CAST(ROUND(RAND() * 10000,0)AS NUMERIC)%1000,'04.04.2023')
 
 	insert into [dbo].Book_Journal([ID_Reader],[ID_Books_Example],[Date_Of_Taking],[Date_Of_Bringing_Back])
 	values (@idReader,@idBookEx,@DateOfT, @DateOfBB)
